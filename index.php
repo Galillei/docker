@@ -64,18 +64,23 @@ $app->get('/install',function() use ($app,$error,$capsule){
 
 });
 
-$app->get('/install/application',function() use ($app){
+$app->get('/install/application',function() use ($app,$error){
 //здесь реализовываем логику проверки готовности, считается, если есть таблица country - то с приложение работать можно
+    if(count($error['error'])){
+        $app->response->headers->set('Content-Type','application/json');
+        echo(json_encode($error));
+        return;
+    }
     try{
         $countries = \model\Country::findOrFail(1);
-    }catch(\Illuminate\Database\Eloquent\ModelNotFoundException $e){
-        $error = ['error'=>true];
+    }catch(Exception $e){
+        $errors = ['error'=>true];
     }
-    if(!isset($error)){
-        $error = ['error'=>false];
+    if(!isset($errors)){
+        $errors = ['error'=>false];
     }
     $app->response->headers->set('Content-Type','application/json');
-    echo(json_encode($error));
+    echo(json_encode($errors));
 });
 $app->group('/application',function() use ($app){
     $app->get('/countries',function() use ($app){
