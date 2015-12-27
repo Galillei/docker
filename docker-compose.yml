@@ -1,5 +1,4 @@
-web:
-  image: nginx
+web:  image: nginx
   ports: 
    - "80:80"
   volumes:
